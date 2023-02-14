@@ -5,6 +5,7 @@ var flip;
 
 var message;
 var reset;
+var tTime;		// trial time, time to remember the pieces
 var level;
 var pieces;
 var squares;
