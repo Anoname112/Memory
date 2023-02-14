@@ -10,7 +10,6 @@ const msgFont = msgFontSize + "px Consolas";
 
 const interval = 10;
 
-
 const squareWidth = 40;
 const squareHeight = 40;
 const squareColor = "#f4a460";

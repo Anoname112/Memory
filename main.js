@@ -4,7 +4,7 @@ var ost;
 var flip;
 
 var message;
-var stopped;
+var reset;
 var level;
 var pieces;
 var squares;
@@ -21,12 +21,14 @@ function resizeCanvas () {
 }
 
 function onMouseDown (e) {
+	// Resume game from message pauses
 	if (message.length > 0) {
-		if (stopped) prepareStartLevel();
+		if (reset) prepareStartLevel();
 		init();
 		return;
 	}
 	
+	// Read clicks only when trial time ended
 	if (tTime == 0) {
 		for (i = 0; i < squarePower; i++) {
 			if (e.layerX >= squares[i].X && e.layerX < squares[i].X + squareWidth && e.layerY >= squares[i].Y && e.layerY < squares[i].Y + squareHeight) {
@@ -34,11 +36,6 @@ function onMouseDown (e) {
 					if (!squares[i].Clicked) playSound();
 					squares[i].Clicked = true;
 					if (numberOfClicked() == pieces) {
-						squares[i].X = pX + squareWidth * Math.floor(i / squareCount);
-						squares[i].Y = pY + squareHeight * (i % squareCount);
-						
-						fillRect(squares[i].X, squares[i].Y, squareWidth, squareHeight, remainColor);
-						
 						timerTick();
 						level++;
 						pieces++;
@@ -52,21 +49,21 @@ function onMouseDown (e) {
 						}
 						
 						if (level > finalLevel) {
-							stopped = true;
+							reset = true;
 							message = "CONGRATULATION FOR FINISHING THE GAME! Click to play again.";
 						}
 						else {
-							stopped = false;
+							reset = false;
 							message = "YOU WIN. Click to continue.";
 						}
-						drawMessage(message, pX, pY - (45 + msgPad));
+						drawMessage(message, pX, pY - (msgFontSize * 3 + msgPad));
 					}
 				}
 				else {
 					timerTick();
-					stopped = true;
+					reset = true;
 					message = "YOU LOSE! Click to play again.";
-					drawMessage(message, pX, pY - (45 + msgPad));
+					drawMessage(message, pX, pY - (msgFontSize * 3 + msgPad));
 					for (j = 0; j < squarePower; j++) {
 						if (squares[j].Played && !squares[j].Clicked) {
 							squares[j].X = pX + squareWidth * Math.floor(j / squareCount);
@@ -101,7 +98,7 @@ function drawRect (x, y, w, h, s) {
 function drawMessage (msg, x, y) {
 	ctx.font = msgFont;
 	ctx.fillStyle = msgTextColor;
-	ctx.fillText(msg, x, y + 12);
+	ctx.fillText(msg, x, y + msgFontSize);
 }
 
 function timerTick () {
@@ -167,7 +164,7 @@ function init () {
 		if (!squares[indx].Played) squares[indx].Played = true;
 	}
 	
-	stopped = false;
+	//reset = false;
 	message = "";
 	
 	tTime = trialTime;
@@ -192,7 +189,7 @@ window.onload = function () {
 	c.onmousedown = onMouseDown;
 	ctx = c.getContext("2d");
 	
-	// Prepare audio
+	// Prepare soundtrack
 	ost = document.getElementById("myAudio");
 	ost.style.visibility = audioVisibility;
 	ost.addEventListener('ended', function() {
@@ -200,7 +197,7 @@ window.onload = function () {
 		this.play();
 	}, false);
 	
-	// Prepare sound effect
+	// Prepare flip sound effect
 	flip = document.getElementById("mySound");
 	flip.style.visibility = audioVisibility;
 	
@@ -208,9 +205,9 @@ window.onload = function () {
 	squares = new Array(bound);
 	for (i = 0; i < bound; i++) squares[i] = new Object;
 	
+	reset = true;
 	message = "CLICK TO START PLAYING";
 	drawMessage(message, (c.width - (message.length * 8)) / 2, (c.height - msgFontSize) / 2);
-	stopped = true;
 	
 	setInterval(timerTick, interval);
 }
