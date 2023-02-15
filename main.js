@@ -1,6 +1,6 @@
 var c;
 var ctx;
-var st;
+var bgm;
 var flip;
 
 var message;
@@ -152,7 +152,7 @@ function prepareStartLevel() {
 	level = 1;
 	pieces = startPieces;
 	setCount(startSquares);
-	playSound(st);
+	playSound(bgm);
 }
 
 function init () {
@@ -191,9 +191,9 @@ window.onload = function () {
 	ctx = c.getContext("2d");
 	
 	// Prepare soundtrack
-	st = document.getElementById("myAudio");
-	st.style.visibility = audioVisibility;
-	st.addEventListener('ended', function() {
+	bgm = document.getElementById("myAudio");
+	bgm.style.visibility = audioVisibility;
+	bgm.addEventListener('ended', function() {
 		this.currentTime = 0;
 		this.play();
 	}, false);
