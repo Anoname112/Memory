@@ -1,6 +1,6 @@
 var c;
 var ctx;
-var ost;
+var st;
 var flip;
 
 var message;
@@ -34,7 +34,7 @@ function onMouseDown (e) {
 		for (i = 0; i < squarePower; i++) {
 			if (e.layerX >= squares[i].X && e.layerX < squares[i].X + squareWidth && e.layerY >= squares[i].Y && e.layerY < squares[i].Y + squareHeight) {
 				if (squares[i].Played) {
-					if (!squares[i].Clicked) playSound();
+					if (!squares[i].Clicked) playSound(flip);
 					squares[i].Clicked = true;
 					if (numberOfClicked() == pieces) {
 						timerTick();
@@ -80,9 +80,9 @@ function onMouseDown (e) {
 	}
 }
 
-function playSound () {
-	flip.currentTime = 0;
-	flip.play();
+function playSound (sound) {
+	sound.currentTime = 0;
+	sound.play();
 }
 
 function fillRect (x, y, w, h, s) {
@@ -152,7 +152,7 @@ function prepareStartLevel() {
 	level = 1;
 	pieces = startPieces;
 	setCount(startSquares);
-	ost.play();
+	playSound(st);
 }
 
 function init () {
@@ -169,7 +169,7 @@ function init () {
 	message = "";
 	
 	tTime = trialTime;
-	playSound();
+	playSound(flip);
 }
 
 window.onload = function () {
@@ -191,9 +191,9 @@ window.onload = function () {
 	ctx = c.getContext("2d");
 	
 	// Prepare soundtrack
-	ost = document.getElementById("myAudio");
-	ost.style.visibility = audioVisibility;
-	ost.addEventListener('ended', function() {
+	st = document.getElementById("myAudio");
+	st.style.visibility = audioVisibility;
+	st.addEventListener('ended', function() {
 		this.currentTime = 0;
 		this.play();
 	}, false);
