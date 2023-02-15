@@ -4,7 +4,7 @@ var st;
 var flip;
 
 var message;
-var reset;
+var startOver;
 var tTime;		// trial time, time to remember the pieces
 var level;
 var pieces;
@@ -24,7 +24,7 @@ function resizeCanvas () {
 function onMouseDown (e) {
 	// Resume game from message pauses
 	if (message.length > 0) {
-		if (reset) prepareStartLevel();
+		if (startOver) prepareStartLevel();
 		init();
 		return;
 	}
@@ -50,11 +50,11 @@ function onMouseDown (e) {
 						}
 						
 						if (level > finalLevel) {
-							reset = true;
+							startOver = true;
 							message = "CONGRATULATION FOR FINISHING THE GAME! Click to play again.";
 						}
 						else {
-							reset = false;
+							startOver = false;
 							message = "YOU WIN. Click to continue.";
 						}
 						drawMessage(message, pX, pY - (msgFontSize * 3 + msgPad));
@@ -62,7 +62,7 @@ function onMouseDown (e) {
 				}
 				else {
 					timerTick();
-					reset = true;
+					startOver = true;
 					message = "YOU LOSE! Click to play again.";
 					drawMessage(message, pX, pY - (msgFontSize * 3 + msgPad));
 					for (j = 0; j < squarePower; j++) {
@@ -165,7 +165,7 @@ function init () {
 		if (!squares[indx].Played) squares[indx].Played = true;
 	}
 	
-	//reset = false;
+	//startOver = false;
 	message = "";
 	
 	tTime = trialTime;
@@ -206,7 +206,7 @@ window.onload = function () {
 	squares = new Array(bound);
 	for (i = 0; i < bound; i++) squares[i] = new Object;
 	
-	reset = true;
+	startOver = true;
 	message = "CLICK TO START PLAYING";
 	drawMessage(message, (c.width - (message.length * 8)) / 2, (c.height - msgFontSize) / 2);
 	
