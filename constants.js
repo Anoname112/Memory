@@ -22,4 +22,4 @@ const trialTime = 150;
 const bound = 49;					// Must be sqrt-able, for example: 9, 16, 25, 36, 49, 64, 81, 100, 121, ...
 const startSquares = 3;
 const startPieces = 3;
-const finalLevel = 5;
+const finalLevel = 18;
