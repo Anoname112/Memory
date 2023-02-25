@@ -4,8 +4,8 @@ var bgm;
 var flip;
 
 var message;
-var gameState;	// 0. not started, 1. playing, 2. win, 3. lose, 4. completed
-var tTime;		// trial time, time to remember the pieces
+var gameState;
+var remTime;		// time to remember played pieces
 var level;
 var pieces;
 var squares;
@@ -22,63 +22,59 @@ function resizeCanvas () {
 }
 
 function onMouseDown (e) {
-	if (gameState == 0) {
-		prepareStartLevel();
-		init();
-	}
-	else if (gameState == 1) {
-		// Read clicks only when trial time ended
-		if (tTime == 0) {
-			for (i = 0; i < squarePower; i++) {
-				if (e.layerX >= squares[i].X && e.layerX < squares[i].X + squareWidth && e.layerY >= squares[i].Y && e.layerY < squares[i].Y + squareHeight) {
-					if (squares[i].Played) {
-						if (!squares[i].Clicked) playSound(flip);
-						squares[i].Clicked = true;
-						if (numberOfClicked() == pieces) {
-							if (level == finalLevel) {
-								gameState = 4
-								message = "CONGRATULATION YOU COMPLETED THE GAME! Click to play again.";
-							}
-							else {
-								gameState = 2;
-								message = "YOU WIN. Click to continue.";
+	switch (gameState) {
+		case 0:		// Game not started
+		case 3:		// Lost
+		case 4:		// Completed the game
+			prepareStartLevel();
+			init();
+			break;
+		case 2:	// Won
+			level++;
+			pieces++;
+			if (pieces > Math.floor(squarePower / 2)) {		// Add more squares when more than half squares are played
+				if (squareCount == Math.sqrt(bound)) prepareStartLevel();
+				else {
+					pieces = startPieces;		// reset the number of played squares, make the game easier
+					setCount(squareCount + 1);
+				}
+			}
+			init();
+			break;
+		case 1:		// Playing
+			if (remTime == 0) {
+				for (i = 0; i < squarePower; i++) {
+					if (e.layerX >= squares[i].X && e.layerX < squares[i].X + squareWidth && e.layerY >= squares[i].Y && e.layerY < squares[i].Y + squareHeight) {
+						if (squares[i].Played) {
+							if (!squares[i].Clicked) playSound(flip);
+							squares[i].Clicked = true;
+							if (numberOfClicked() == pieces) {
+								if (level == finalLevel) {
+									gameState = 4
+									message = "CONGRATULATION YOU COMPLETED THE GAME! Click to play again.";
+								}
+								else {
+									gameState = 2;
+									message = "YOU WIN. Click to continue.";
+								}
 							}
 						}
-					}
-					else {
-						gameState = 3;
-						message = "YOU LOSE! Click to play again.";
+						else {
+							gameState = 3;
+							message = "YOU LOSE! Click to play again.";
+						}
 					}
 				}
 			}
-		}
-	}
-	else if (gameState == 2) {
-		level++;
-		pieces++;
-		// Add more squares when more than half squares are played
-		if (pieces > Math.floor(squarePower / 2)) {
-			if (squareCount == Math.sqrt(bound)) prepareStartLevel();
-			else {
-				pieces = startPieces;	// reset the number of played squares, make the game easier
-				setCount(squareCount + 1);
-			}
-		}
-		
-		init();
-	}
-	else if (gameState == 3) {
-		prepareStartLevel();
-		init();
-	}
-	else if (gameState == 4) {
-		prepareStartLevel();
-		init();
+
+			break;
+		default:
+			break;
 	}
 }
 
 function playSound (sound) {
-	sound.currentTime = 0;
+	sound.currenremTime = 0;
 	sound.play();
 }
 
@@ -107,7 +103,7 @@ function timerTick () {
 		drawMessage(message, (c.width - (message.length * 8)) / 2, (c.height - msgFontSize) / 2);
 	}
 	else if (gameState >= 1) {
-		if (tTime > 0) tTime--;
+		if (remTime > 0) remTime--;
 		
 		// Prepare paddings
 		pX = (c.width - (squareWidth * squareCount)) / 2;
@@ -116,7 +112,7 @@ function timerTick () {
 		
 		// Draw gameplay messages
 		drawMessage("Level " + level, pX, pY - (msgFontSize * 5 + msgPad));
-		if (tTime > 0) drawMessage("REMEMBER!", pX, pY - (msgFontSize + msgPad));
+		if (remTime > 0) drawMessage("REMEMBER!", pX, pY - (msgFontSize + msgPad));
 		else drawMessage("PLAY!", pX, pY - (msgFontSize + msgPad));
 		
 		// Draw squares
@@ -124,15 +120,17 @@ function timerTick () {
 			squares[i].X = pX + squareWidth * Math.floor(i / squareCount);
 			squares[i].Y = pY + squareHeight * (i % squareCount);
 			
-			if (tTime > 0) fillRect(squares[i].X, squares[i].Y, squareWidth, squareHeight, squares[i].Played ? squareColor : "#fff");
+			if (remTime > 0) fillRect(squares[i].X, squares[i].Y, squareWidth, squareHeight, squares[i].Played ? squareColor : "#fff");
 			else fillRect(squares[i].X, squares[i].Y, squareWidth, squareHeight, squares[i].Clicked ? squareColor : "#fff");
 			drawRect(squares[i].X, squares[i].Y, squareWidth, squareHeight);
 		}
 		
 		if (gameState >= 2) {
+			// Draw result messages
 			drawMessage(message, pX, pY - (msgFontSize * 3 + msgPad));
 			
 			if (gameState == 3) {
+				// Draw unclicked squares
 				for (j = 0; j < squarePower; j++) {
 					if (squares[j].Played && !squares[j].Clicked) {
 						squares[j].X = pX + squareWidth * Math.floor(j / squareCount);
@@ -181,10 +179,10 @@ function init () {
 		if (!squares[indx].Played) squares[indx].Played = true;
 	}
 	
+	gameState = 1;
 	message = "";
 	
-	gameState = 1;
-	tTime = trialTime;
+	remTime = rememberTime;
 	playSound(flip);
 }
 
@@ -210,7 +208,7 @@ window.onload = function () {
 	bgm = document.getElementById("myAudio");
 	bgm.style.visibility = audioVisibility;
 	bgm.addEventListener('ended', function() {
-		this.currentTime = 0;
+		this.currenremTime = 0;
 		this.play();
 	}, false);
 	
