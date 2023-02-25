@@ -162,7 +162,7 @@ function numberOfClicked () {
 	return n;
 }
 
-function prepareStartLevel() {
+function prepareStartLevel () {
 	level = 1;
 	pieces = startPieces;
 	setCount(startSquares);
