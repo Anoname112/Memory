@@ -4,7 +4,7 @@ var bgm;
 var flip;
 
 var message;
-var startOver;
+var gameState;	// 0. not started, 1. playing, 2. win, 3. lose, 4. completed
 var tTime;		// trial time, time to remember the pieces
 var level;
 var pieces;
@@ -22,61 +22,58 @@ function resizeCanvas () {
 }
 
 function onMouseDown (e) {
-	// Resume game from message pauses
-	if (message.length > 0) {
-		if (startOver) prepareStartLevel();
+	if (gameState == 0) {
+		prepareStartLevel();
 		init();
-		return;
 	}
-	
-	// Read clicks only when trial time ended
-	if (tTime == 0) {
-		for (i = 0; i < squarePower; i++) {
-			if (e.layerX >= squares[i].X && e.layerX < squares[i].X + squareWidth && e.layerY >= squares[i].Y && e.layerY < squares[i].Y + squareHeight) {
-				if (squares[i].Played) {
-					if (!squares[i].Clicked) playSound(flip);
-					squares[i].Clicked = true;
-					if (numberOfClicked() == pieces) {
-						timerTick();
-						level++;
-						pieces++;
-						// Add more squares when more than half squares are played
-						if (pieces > Math.floor(squarePower / 2)) {
-							if (squareCount == Math.sqrt(bound)) prepareStartLevel();
+	else if (gameState == 1) {
+		// Read clicks only when trial time ended
+		if (tTime == 0) {
+			for (i = 0; i < squarePower; i++) {
+				if (e.layerX >= squares[i].X && e.layerX < squares[i].X + squareWidth && e.layerY >= squares[i].Y && e.layerY < squares[i].Y + squareHeight) {
+					if (squares[i].Played) {
+						if (!squares[i].Clicked) playSound(flip);
+						squares[i].Clicked = true;
+						if (numberOfClicked() == pieces) {
+							if (level == finalLevel) {
+								gameState = 4
+								message = "CONGRATULATION Y THE GAME! Click to play again.";
+							}
 							else {
-								pieces = startPieces;	// reset the number of played squares, make the game easier
-								setCount(squareCount + 1);
+								gameState = 2;
+								message = "YOU WIN. Click to continue.";
 							}
 						}
-						
-						if (level > finalLevel) {
-							startOver = true;
-							message = "CONGRATULATION FOR FINISHING THE GAME! Click to play again.";
-						}
-						else {
-							startOver = false;
-							message = "YOU WIN. Click to continue.";
-						}
-						drawMessage(message, pX, pY - (msgFontSize * 3 + msgPad));
 					}
-				}
-				else {
-					timerTick();
-					startOver = true;
-					message = "YOU LOSE! Click to play again.";
-					drawMessage(message, pX, pY - (msgFontSize * 3 + msgPad));
-					for (j = 0; j < squarePower; j++) {
-						if (squares[j].Played && !squares[j].Clicked) {
-							squares[j].X = pX + squareWidth * Math.floor(j / squareCount);
-							squares[j].Y = pY + squareHeight * (j % squareCount);
-							
-							fillRect(squares[j].X, squares[j].Y, squareWidth, squareHeight, remainColor);
-							drawRect(squares[j].X, squares[j].Y, squareWidth, squareHeight);
-						}
+					else {
+						gameState = 3;
+						message = "YOU LOSE! Click to play again.";
 					}
 				}
 			}
 		}
+	}
+	else if (gameState == 2) {
+		level++;
+		pieces++;
+		// Add more squares when more than half squares are played
+		if (pieces > Math.floor(squarePower / 2)) {
+			if (squareCount == Math.sqrt(bound)) prepareStartLevel();
+			else {
+				pieces = startPieces;	// reset the number of played squares, make the game easier
+				setCount(squareCount + 1);
+			}
+		}
+		
+		init();
+	}
+	else if (gameState == 3) {
+		prepareStartLevel();
+		init();
+	}
+	else if (gameState == 4) {
+		prepareStartLevel();
+		init();
 	}
 }
 
@@ -103,19 +100,22 @@ function drawMessage (msg, x, y) {
 }
 
 function timerTick () {
-	if (message.length == 0) {
+	// Invalidate
+	c.width = c.width;
+	
+	if (gameState == 0) {
+		drawMessage(message, (c.width - (message.length * 8)) / 2, (c.height - msgFontSize) / 2);
+	}
+	else if (gameState >= 1) {
 		if (tTime > 0) tTime--;
-		
-		// Invalidate
-		c.width = c.width;
 		
 		// Prepare paddings
 		pX = (c.width - (squareWidth * squareCount)) / 2;
 		pY = (c.height - (squareHeight * squareCount)) / 2;
 		msgPad = c.width / (msgFontSize * 6);
 		
-		// Draw messages
-		drawMessage("Level " + level, pX, pY - ((msgFontSize * 5) + msgPad));
+		// Draw gameplay messages
+		drawMessage("Level " + level, pX, pY - (msgFontSize * 5 + msgPad));
 		if (tTime > 0) drawMessage("REMEMBER!", pX, pY - (msgFontSize + msgPad));
 		else drawMessage("PLAY!", pX, pY - (msgFontSize + msgPad));
 		
@@ -127,6 +127,22 @@ function timerTick () {
 			if (tTime > 0) fillRect(squares[i].X, squares[i].Y, squareWidth, squareHeight, squares[i].Played ? squareColor : "#fff");
 			else fillRect(squares[i].X, squares[i].Y, squareWidth, squareHeight, squares[i].Clicked ? squareColor : "#fff");
 			drawRect(squares[i].X, squares[i].Y, squareWidth, squareHeight);
+		}
+		
+		if (gameState >= 2) {
+			drawMessage(message, pX, pY - (msgFontSize * 3 + msgPad));
+			
+			if (gameState == 3) {
+				for (j = 0; j < squarePower; j++) {
+					if (squares[j].Played && !squares[j].Clicked) {
+						squares[j].X = pX + squareWidth * Math.floor(j / squareCount);
+						squares[j].Y = pY + squareHeight * (j % squareCount);
+						
+						fillRect(squares[j].X, squares[j].Y, squareWidth, squareHeight, remainColor);
+						drawRect(squares[j].X, squares[j].Y, squareWidth, squareHeight);
+					}
+				}
+			}
 		}
 	}
 }
@@ -165,9 +181,9 @@ function init () {
 		if (!squares[indx].Played) squares[indx].Played = true;
 	}
 	
-	//startOver = false;
 	message = "";
 	
+	gameState = 1;
 	tTime = trialTime;
 	playSound(flip);
 }
@@ -206,9 +222,8 @@ window.onload = function () {
 	squares = new Array(bound);
 	for (i = 0; i < bound; i++) squares[i] = new Object;
 	
-	startOver = true;
+	gameState = 0;
 	message = "CLICK TO START PLAYING";
-	drawMessage(message, (c.width - (message.length * 8)) / 2, (c.height - msgFontSize) / 2);
 	
 	setInterval(timerTick, interval);
 }
