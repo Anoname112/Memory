@@ -37,7 +37,7 @@ function onMouseDown (e) {
 						if (numberOfClicked() == pieces) {
 							if (level == finalLevel) {
 								gameState = 4
-								message = "CONGRATULATION Y THE GAME! Click to play again.";
+								message = "CONGRATULATION YOU COMPLETED THE GAME! Click to play again.";
 							}
 							else {
 								gameState = 2;
