@@ -100,7 +100,7 @@ function timerTick () {
 	c.width = c.width;
 	
 	if (gameState == 0) {
-		drawMessage(message, (c.width - (message.length * (msgFontSize - 7))) / 2, (c.height - msgFontSize) / 2);
+		drawMessage(message, (c.width - (message.length * (msgFontSize - 7 * msgFontSize / 15))) / 2, (c.height - msgFontSize) / 2);
 	}
 	else if (gameState >= 1) {
 		if (remTime > 0) remTime--;
