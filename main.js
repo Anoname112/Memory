@@ -89,7 +89,8 @@ function drawRect (x, y, w, h, s) {
 	ctx.stroke();
 }
 
-function drawMessage (msg, x, y) {
+function drawMessage (msg, x, y, align) {
+	ctx.textAlign = (align == null) ? "start" : align; 
 	ctx.font = msgFont;
 	ctx.fillStyle = msgTextColor;
 	ctx.fillText(msg, x, y + msgFontSize);
@@ -99,8 +100,11 @@ function timerTick () {
 	// Invalidate
 	c.width = c.width;
 	
+	var centerX = c.width / 2;
+	
 	if (gameState == 0) {
-		drawMessage(message, (c.width - (message.length * (msgFontSize - 7 * msgFontSize / 15))) / 2, (c.height - msgFontSize) / 2);
+		
+		drawMessage(message, centerX, (c.height - msgFontSize) / 2, "center");
 	}
 	else if (gameState >= 1) {
 		if (remTime > 0) remTime--;
@@ -111,9 +115,9 @@ function timerTick () {
 		msgPad = c.width / (msgFontSize * 6);
 		
 		// Draw gameplay messages
-		drawMessage("Level " + level, pX, pY - (msgFontSize * 5 + msgPad));
-		if (remTime > 0) drawMessage("REMEMBER!", pX, pY - (msgFontSize + msgPad));
-		else drawMessage("PLAY!", pX, pY - (msgFontSize + msgPad));
+		drawMessage("Level " + level, centerX, pY - (msgFontSize * 5 + msgPad), "center");
+		if (remTime > 0) drawMessage("REMEMBER!", centerX, pY - (msgFontSize + msgPad), "center");
+		else drawMessage("PLAY!", centerX, pY - (msgFontSize + msgPad), "center");
 		
 		// Draw squares
 		for (i = 0; i < squarePower; i++) {
@@ -127,7 +131,7 @@ function timerTick () {
 		
 		if (gameState >= 2) {
 			// Draw result messages
-			drawMessage(message, pX, pY - (msgFontSize * 3 + msgPad));
+			drawMessage(message, centerX, pY - (msgFontSize * 3 + msgPad), "center");
 			
 			if (gameState == 3) {
 				// Draw unclicked squares
