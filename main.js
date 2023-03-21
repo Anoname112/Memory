@@ -94,6 +94,7 @@ function drawMessage (msg, x, y, align) {
 	ctx.font = msgFont;
 	ctx.fillStyle = msgTextColor;
 	ctx.fillText(msg, x, y + msgFontSize);
+	ctx.textAlign = "start";
 }
 
 function timerTick () {
