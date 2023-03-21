@@ -104,7 +104,6 @@ function timerTick () {
 	var centerX = c.width / 2;
 	
 	if (gameState == 0) {
-		
 		drawMessage(message, centerX, (c.height - msgFontSize) / 2, "center");
 	}
 	else if (gameState >= 1) {
