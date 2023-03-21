@@ -51,17 +51,17 @@ function onMouseDown (e) {
 							if (numberOfClicked() == pieces) {
 								if (level == finalLevel) {
 									gameState = 4
-									message = "CONGRATULATION YOU COMPLETED THE GAME! Click to play again.";
+									message = "CONGRATULATION YOU COMPLETED THE GAME! Click to play again";
 								}
 								else {
 									gameState = 2;
-									message = "YOU WIN. Click to continue.";
+									message = "YOU WIN. Click to continue";
 								}
 							}
 						}
 						else {
 							gameState = 3;
-							message = "YOU LOSE! Click to play again.";
+							message = "YOU LOSE! Click to play again";
 						}
 					}
 				}
