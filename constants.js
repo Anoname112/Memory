@@ -1,6 +1,7 @@
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 const isPortrait = window.innerWidth < window.innerHeight;
 
+const bodyMargin = "0";
 const bodyBackColor = "#fff";
 const bodyTextColor = "#fff";
 const bodyFont = "15px Segoe UI";
