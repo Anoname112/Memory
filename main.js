@@ -212,7 +212,7 @@ window.onload = function () {
 	// Prepare soundtrack
 	bgm = document.getElementById("myAudio");
 	bgm.style.visibility = audioVisibility;
-	bgm.addEventListener('ended', function() {
+	bgm.addEventListener('ended', function () {
 		this.currenremTime = 0;
 		this.play();
 	}, false);
