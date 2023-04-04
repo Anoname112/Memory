@@ -11,6 +11,7 @@ var pieces;
 var squares;
 var squareCount;
 var squarePower;
+var intervalId;
 
 var pX;
 var pY;
@@ -228,5 +229,5 @@ window.onload = function () {
 	gameState = 0;
 	message = "CLICK TO START PLAYING";
 	
-	setInterval(timerTick, interval);
+	intervalId = setInterval(timerTick, interval);
 }
