@@ -31,8 +31,8 @@ window.onload = function () {
 	canvas.style.background = canvasBackColor;
 	canvas.style.position = canvasPosition;
 	resizeCanvas();
-	canvas.style.left = (window.innerWidth - c.width) / 2;
-	canvas.style.top = (window.innerHeight - c.height) / 2;
+	canvas.style.left = (window.innerWidth - canvas.width) / 2;
+	canvas.style.top = (window.innerHeight - canvas.height) / 2;
 	canvas.onmousedown = onMouseDown;
 	ctx = canvas.getContext("2d");
 	
