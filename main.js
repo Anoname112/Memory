@@ -3,6 +3,7 @@ var ctx;
 var bgm;
 var flip;
 
+var intervalId;
 var message;
 var gameState;
 var remTime;		// time to remember played pieces
@@ -11,11 +12,75 @@ var pieces;
 var squares;
 var squareCount;
 var squarePower;
-var intervalId;
 
 var pX;
 var pY;
 var msgPad;
+
+window.onload = function () {
+	window.onresize = resizeCanvas;
+	
+	// Prepare body
+	document.body.style.margin = bodyMargin;
+	document.body.style.background = bodyBackColor;
+	document.body.style.color = bodyTextColor;
+	document.body.style.font = bodyFont;
+	
+	// Prepare canvas
+	c = document.getElementById("myCanvas");
+	c.style.background = canvasBackColor;
+	c.style.position = canvasPosition;
+	resizeCanvas();
+	c.style.left = (window.innerWidth - c.width) / 2;
+	c.style.top = (window.innerHeight - c.height) / 2;
+	c.onmousedown = onMouseDown;
+	ctx = c.getContext("2d");
+	
+	// Prepare soundtrack
+	bgm = document.getElementById("myAudio");
+	bgm.style.visibility = audioVisibility;
+	bgm.addEventListener('ended', function () {
+		this.currenremTime = 0;
+		this.play();
+	}, false);
+	
+	// Prepare flip sound effect
+	flip = document.getElementById("mySound");
+	flip.style.visibility = audioVisibility;
+	
+	// Prepare squares
+	squares = new Array(bound);
+	for (i = 0; i < bound; i++) squares[i] = new Object;
+	
+	gameState = 0;
+	message = "CLICK TO START PLAYING";
+	
+	intervalId = setInterval(timerTick, interval);
+}
+
+function prepareStartLevel () {
+	level = 1;
+	pieces = startPieces;
+	setCount(startSquares);
+	playSound(bgm);
+}
+
+function init () {
+	// Initialize squares
+	for (i = 0; i < squarePower; i++) squares[i].Played = squares[i].Clicked = false;
+	
+	// Randomly pick played squares
+	while (numberOfPlayed() < pieces) {
+		indx = Math.floor(Math.random() * squarePower);
+		if (!squares[indx].Played) squares[indx].Played = true;
+	}
+	
+	gameState = 1;
+	message = "";
+	
+	remTime = rememberTime;
+	playSound(flip);
+}
 
 function resizeCanvas () {
 	c.width = window.innerWidth;
@@ -52,7 +117,7 @@ function onMouseDown (e) {
 							if (numberOfClicked() == pieces) {
 								if (level == finalLevel) {
 									gameState = 4
-									message = "YOU FINISHED THE GAME! Click to play again";
+									message = "CONRATULATIONS! Click to play again";
 								}
 								else {
 									gameState = 2;
@@ -96,6 +161,23 @@ function drawMessage (msg, x, y, align) {
 	ctx.fillStyle = msgTextColor;
 	ctx.fillText(msg, x, y + msgFontSize);
 	ctx.textAlign = "start";
+}
+
+function setCount (x) {
+	squareCount = x;
+	squarePower = x * x;
+}
+
+function numberOfPlayed () {
+	var n = 0;
+	for (i = 0; i < squarePower; i++) if (squares[i].Played) n++;
+	return n;
+}
+
+function numberOfClicked () {
+	var n = 0;
+	for (i = 0; i < squarePower; i++) if (squares[i].Clicked) n++;
+	return n;
 }
 
 function timerTick () {
@@ -148,86 +230,4 @@ function timerTick () {
 			}
 		}
 	}
-}
-
-function setCount (x) {
-	squareCount = x;
-	squarePower = x * x;
-}
-
-function numberOfPlayed () {
-	var n = 0;
-	for (i = 0; i < squarePower; i++) if (squares[i].Played) n++;
-	return n;
-}
-
-function numberOfClicked () {
-	var n = 0;
-	for (i = 0; i < squarePower; i++) if (squares[i].Clicked) n++;
-	return n;
-}
-
-function prepareStartLevel () {
-	level = 1;
-	pieces = startPieces;
-	setCount(startSquares);
-	playSound(bgm);
-}
-
-function init () {
-	// Initialize squares
-	for (i = 0; i < squarePower; i++) squares[i].Played = squares[i].Clicked = false;
-	
-	// Randomly pick played squares
-	while (numberOfPlayed() < pieces) {
-		indx = Math.floor(Math.random() * squarePower);
-		if (!squares[indx].Played) squares[indx].Played = true;
-	}
-	
-	gameState = 1;
-	message = "";
-	
-	remTime = rememberTime;
-	playSound(flip);
-}
-
-window.onload = function () {
-	window.onresize = resizeCanvas;
-	
-	// Prepare body
-	document.body.style.margin = bodyMargin;
-	document.body.style.background = bodyBackColor;
-	document.body.style.color = bodyTextColor;
-	document.body.style.font = bodyFont;
-	
-	// Prepare canvas
-	c = document.getElementById("myCanvas");
-	c.style.background = canvasBackColor;
-	c.style.position = canvasPosition;
-	resizeCanvas();
-	c.style.left = (window.innerWidth - c.width) / 2;
-	c.style.top = (window.innerHeight - c.height) / 2;
-	c.onmousedown = onMouseDown;
-	ctx = c.getContext("2d");
-	
-	// Prepare soundtrack
-	bgm = document.getElementById("myAudio");
-	bgm.style.visibility = audioVisibility;
-	bgm.addEventListener('ended', function () {
-		this.currenremTime = 0;
-		this.play();
-	}, false);
-	
-	// Prepare flip sound effect
-	flip = document.getElementById("mySound");
-	flip.style.visibility = audioVisibility;
-	
-	// Prepare squares
-	squares = new Array(bound);
-	for (i = 0; i < bound; i++) squares[i] = new Object;
-	
-	gameState = 0;
-	message = "CLICK TO START PLAYING";
-	
-	intervalId = setInterval(timerTick, interval);
 }
