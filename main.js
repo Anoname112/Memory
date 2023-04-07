@@ -1,4 +1,4 @@
-var c;
+var canvas;
 var ctx;
 var bgm;
 var flip;
@@ -27,14 +27,14 @@ window.onload = function () {
 	document.body.style.font = bodyFont;
 	
 	// Prepare canvas
-	c = document.getElementById("myCanvas");
-	c.style.background = canvasBackColor;
-	c.style.position = canvasPosition;
+	canvas = document.getElementById("myCanvas");
+	canvas.style.background = canvasBackColor;
+	canvas.style.position = canvasPosition;
 	resizeCanvas();
-	c.style.left = (window.innerWidth - c.width) / 2;
-	c.style.top = (window.innerHeight - c.height) / 2;
-	c.onmousedown = onMouseDown;
-	ctx = c.getContext("2d");
+	canvas.style.left = (window.innerWidth - c.width) / 2;
+	canvas.style.top = (window.innerHeight - c.height) / 2;
+	canvas.onmousedown = onMouseDown;
+	ctx = canvas.getContext("2d");
 	
 	// Prepare soundtrack
 	bgm = document.getElementById("myAudio");
@@ -83,8 +83,8 @@ function init () {
 }
 
 function resizeCanvas () {
-	c.width = window.innerWidth;
-	c.height = window.innerHeight;
+	canvas.width = window.innerWidth;
+	canvas.height = window.innerHeight;
 }
 
 function onMouseDown (e) {
@@ -184,18 +184,18 @@ function timerTick () {
 	// Invalidate
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	
-	var centerX = c.width / 2;
+	var centerX = canvas.width / 2;
 	
 	if (gameState == 0) {
-		drawMessage(message, centerX, (c.height - msgFontSize) / 2, "center");
+		drawMessage(message, centerX, (canvas.height - msgFontSize) / 2, "center");
 	}
 	else if (gameState >= 1) {
 		if (remTime > 0) remTime--;
 		
 		// Prepare paddings
-		pX = (c.width - (squareWidth * squareCount)) / 2;
-		pY = (c.height - (squareHeight * squareCount)) / 2;
-		msgPad = c.width / (msgFontSize * 6);
+		pX = (canvas.width - (squareWidth * squareCount)) / 2;
+		pY = (canvas.height - (squareHeight * squareCount)) / 2;
+		msgPad = canvas.width / (msgFontSize * 6);
 		
 		// Draw gameplay messages
 		drawMessage("Level " + level, centerX, pY - (msgFontSize * 5 + msgPad), "center");
