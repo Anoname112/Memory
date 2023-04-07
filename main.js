@@ -182,7 +182,7 @@ function numberOfClicked () {
 
 function timerTick () {
 	// Invalidate
-	c.width = c.width;
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	
 	var centerX = c.width / 2;
 	
