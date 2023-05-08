@@ -33,7 +33,7 @@ window.onload = function () {
 	canvas.width = window.innerWidth * ratio;
 	canvas.height = window.innerHeight * ratio;
 	canvas.style.width = window.innerWidth + 'px';
-    canvas.style.height = window.innerHeight + 'px';
+	canvas.style.height = window.innerHeight + 'px';
 	canvas.getContext('2d').scale(ratio, ratio);
 	ctx = canvas.getContext('2d');
 	
@@ -59,10 +59,6 @@ window.onload = function () {
 	intervalId = setInterval(timerTick, interval);
 }
 
-function onResize () {
-	canvas.style.left = (window.innerWidth - canvas.width) / 2;
-}
-
 function prepareStartLevel () {
 	level = 1;
 	pieces = startPieces;
@@ -85,6 +81,10 @@ function init () {
 	
 	remTime = rememberTime;
 	playSound(flip);
+}
+
+function onResize () {
+	canvas.style.left = (window.innerWidth - canvas.width) / 2;
 }
 
 function onMouseDown (e) {
