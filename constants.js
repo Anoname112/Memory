@@ -2,7 +2,7 @@ const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 const isPortrait = window.innerWidth < window.innerHeight;
 
 const interval = 10;
-const squareWidth = isMobile ? (window.innerWidth + window.innerHeight) / 25 : (window.innerWidth + window.innerHeight) / 40;
+const squareWidth = isMobile ? (window.innerWidth + window.innerHeight) / 20 : (window.innerWidth + window.innerHeight) / 45;
 const squareHeight = squareWidth;
 const squareColor = "#F4A460";
 const remainColor = "#A4FF80";
