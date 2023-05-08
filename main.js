@@ -21,8 +21,6 @@ window.onload = function () {
 	window.onresize = onResize;
 	
 	// Prepare body
-	document.body.style.margin = bodyMargin;
-	document.body.style.padding = '0';
 	document.body.style.background = bodyBackColor;
 	document.body.style.color = bodyTextColor;
 	document.body.style.font = bodyFont;
