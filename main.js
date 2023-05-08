@@ -18,23 +18,24 @@ var pY;
 var msgPad;
 
 window.onload = function () {
-	window.onresize = resizeCanvas;
+	window.onresize = onResize;
 	
 	// Prepare body
 	document.body.style.margin = bodyMargin;
+	document.body.style.padding = '0';
 	document.body.style.background = bodyBackColor;
 	document.body.style.color = bodyTextColor;
 	document.body.style.font = bodyFont;
 	
-	// Prepare canvas
-	canvas = document.getElementById("myCanvas");
-	canvas.style.background = canvasBackColor;
-	canvas.style.position = canvasPosition;
-	resizeCanvas();
-	canvas.style.left = (window.innerWidth - canvas.width) / 2;
-	canvas.style.top = (window.innerHeight - canvas.height) / 2;
+	const ratio = window.devicePixelRatio;
+	canvas = document.getElementById('myCanvas');
 	canvas.onmousedown = onMouseDown;
-	ctx = canvas.getContext("2d");
+	canvas.width = window.innerWidth * ratio;
+	canvas.height = window.innerHeight * ratio;
+	canvas.style.width = window.innerWidth + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+	canvas.getContext('2d').scale(ratio, ratio);
+	ctx = canvas.getContext('2d');
 	
 	// Prepare soundtrack
 	bgm = document.getElementById("myAudio");
@@ -56,6 +57,10 @@ window.onload = function () {
 	message = "CLICK TO START PLAYING";
 	
 	intervalId = setInterval(timerTick, interval);
+}
+
+function onResize () {
+	canvas.style.left = (window.innerWidth - canvas.width) / 2;
 }
 
 function prepareStartLevel () {
@@ -80,11 +85,6 @@ function init () {
 	
 	remTime = rememberTime;
 	playSound(flip);
-}
-
-function resizeCanvas () {
-	canvas.width = window.innerWidth;
-	canvas.height = window.innerHeight;
 }
 
 function onMouseDown (e) {
@@ -182,20 +182,20 @@ function numberOfClicked () {
 
 function timerTick () {
 	// Invalidate
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 	
-	var centerX = canvas.width / 2;
+	var centerX = window.innerWidth / 2;
 	
 	if (gameState == 0) {
-		drawMessage(message, centerX, (canvas.height - msgFontSize) / 2, "center");
+		drawMessage(message, centerX, (window.innerHeight - msgFontSize) / 2, "center");
 	}
 	else if (gameState >= 1) {
 		if (remTime > 0) remTime--;
 		
 		// Prepare paddings
-		pX = (canvas.width - (squareWidth * squareCount)) / 2;
-		pY = (canvas.height - (squareHeight * squareCount)) / 2;
-		msgPad = canvas.width / (msgFontSize * 6);
+		pX = (window.innerWidth - (squareWidth * squareCount)) / 2;
+		pY = (window.innerHeight - (squareHeight * squareCount)) / 2;
+		msgPad = msgFontSize;
 		
 		// Draw gameplay messages
 		drawMessage("Level " + level, centerX, pY - (msgFontSize * 5 + msgPad), "center");
