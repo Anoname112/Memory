@@ -13,7 +13,6 @@ const startPieces = 3;
 const finalLevel = 18;
 
 // Body
-const bodyMargin = "0";
 const bodyBackColor = "#FFFFFF";
 const bodyTextColor = "#FFFFFF";
 const bodyFont = "15px Segoe UI";
